@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import register, login, get_cart, get_concert, get_product, create_concert, create_product, add_product_in_cart, qa, get_qa, change_concert, change_product, get_product_detail, change_qa, create_video, get_video_requests, update_video_request_status
+from .views import register, login, get_cart, get_concert, get_product, create_concert, create_product, add_product_in_cart, qa, get_qa, change_concert, change_product, get_product_detail, change_qa, create_video, get_video_requests, update_video_request_status, get_concerts_for_map
 
 urlpatterns = [
     #авторизация
@@ -24,5 +24,7 @@ urlpatterns = [
     #video
     path('video-create/', create_video),
     path('video-request/', get_video_requests),
-    path('video-update/<int:id>', update_video_request_status)
+    path('video-update/<int:id>', update_video_request_status),
+    #map
+    path('get-concert-maps/', get_concerts_for_map)
 ]

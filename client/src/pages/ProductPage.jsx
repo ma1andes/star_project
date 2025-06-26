@@ -3,45 +3,27 @@ import "../css/products.css";
 
 function ProductPage() {
     const [products, setProducts] = useState([]);
-    const [title, setTitle] = useState('');
-    const [desc, setDesc] = useState('');
-    const [type, setType] = useState('');
-    const [price, setPrice] = useState('');
     const [filter, setFilter] = useState('');
     const [search, setSearch] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [newProduct, setNewProduct] = useState({
+        title: '',
+        desc: '',
+        price: '',
+        type: ''
+    });
 
+    const user = localStorage.getItem('user');
     const role = localStorage.getItem('role');
-
-    const deleteProduct = async (id) => {
-        const response = await fetch(`http://10.16.0.83:8000/api/product/${id}`, {
-            method: 'DELETE',
-            headers: { "content-type": 'application/json', Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
-        });
-        if (response.status === 200) {
-            setProducts(prevProducts => prevProducts.filter(product => product.id !== id));
-        }
-    };
-
-    const updateProduct = async (id) => {
-        // Ваш код для обновления продукта
-    };
-
-    const createProduct = async (e) => {
-        e.preventDefault();
-        const response = await fetch('http://10.16.0.83:8000/api/product', {
-            method: 'POST',
-            headers: { "content-type": 'application/json', Authorization: `Bearer ${localStorage.getItem('auth_token')}` },
-            body: JSON.stringify({ title, desc, price, type })
-        });
-        if (response.status === 201) {
-            const data = await response.json();
-            setProducts(prev => [...prev, data]);
-        }
-    };
+    const token = localStorage.getItem('auth_token');
 
     const loadProduct = async () => {
         const response = await fetch('http://10.16.0.83:8000/api/products', {
-            headers: { "content-type": 'application/json' }
+            headers: {
+                "Content-Type": "application/json",
+                ...(token && { Authorization: `Bearer ${token}` })
+            },
+            mode: 'cors'
         });
         if (response.status === 200) {
             const data = await response.json();
@@ -49,10 +31,60 @@ function ProductPage() {
         }
     };
 
+    const deleteProduct = async (id) => {
+        const response = await fetch(`http://10.16.0.83:8000/api/product/${id}`, {
+            method: 'DELETE',
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            mode: 'cors'
+        });
+        if (response.status === 200) {
+            setProducts(prev => prev.filter(p => p.id !== id));
+        }
+    };
+
+    const updateProduct = async (id) => {
+        const productToUpdate = products.find(p => p.id === id);
+
+        const newTitle = prompt("Введите новое название", productToUpdate.title);
+        const newDesc = prompt("Введите описание", productToUpdate.desc);
+        const newPrice = prompt("Введите цену", productToUpdate.price);
+        const newType = prompt("Введите тип (dress/school)", productToUpdate.type);
+
+        const updatedData = {
+            title: newTitle,
+            desc: newDesc,
+            price: parseFloat(newPrice),
+            type: newType
+        };
+
+        const response = await fetch(`http://10.16.0.83:8000/api/product/${id}`, {
+            method: 'PUT',
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(updatedData),
+            mode: 'cors'
+        });
+
+        if (response.status === 200) {
+            loadProduct();
+        } else {
+            alert("Ошибка при обновлении");
+        }
+    };
+
     const SearchProduct = async (e) => {
         e.preventDefault();
         const response = await fetch(`http://10.16.0.83:8000/api/products?title=${search}`, {
-            headers: { "content-type": 'application/json' }
+            headers: {
+                "Content-Type": "application/json",
+                ...(token && { Authorization: `Bearer ${token}` })
+            },
+            mode: 'cors'
         });
         if (response.status === 200) {
             const data = await response.json();
@@ -61,8 +93,13 @@ function ProductPage() {
     };
 
     const FilterProduct = async (selectedFilter) => {
-        const response = await fetch(`http://10.16.0.83:8000/api/products?type=${selectedFilter}`, {
-            headers: { "content-type": 'application/json' }
+        const url = selectedFilter ? `http://10.16.0.83:8000/api/products?type=${selectedFilter}` : 'http://10.16.0.83:8000/api/products';
+        const response = await fetch(url, {
+            headers: {
+                "Content-Type": "application/json",
+                ...(token && { Authorization: `Bearer ${token}` })
+            },
+            mode: 'cors'
         });
         if (response.status === 200) {
             const data = await response.json();
@@ -70,61 +107,126 @@ function ProductPage() {
         }
     };
 
+    const handleFilterChange = (e) => {
+        const selectedFilter = e.target.value;
+        setFilter(selectedFilter);
+        FilterProduct(selectedFilter);
+    };
+
+    const createProduct = async () => {
+        const response = await fetch('http://10.16.0.83:8000/api/product/create', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                ...newProduct,
+                price: parseFloat(newProduct.price)
+            }),
+            mode: 'cors'
+        });
+
+        if (response.status === 201) {
+            loadProduct();
+            setNewProduct({ title: '', desc: '', price: '', type: '' });
+            setIsModalOpen(false);
+        } 
+    };
+
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setNewProduct({ title: '', desc: '', price: '', type: '' });
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setNewProduct((prev) => ({ ...prev, [name]: value }));
+    };
+
     useEffect(() => {
         loadProduct();
     }, []);
 
-    const handleFilterChange = (e) => {
-        const selectedFilter = e.target.value;
-        setFilter(selectedFilter);
-        FilterProduct(selectedFilter); // Применяем фильтрацию сразу после выбора
-    };
-
     return (
         <div>
             {role === 'admin' && (
-                <div>
-                    <h1>СОЗДАНИЕ ТОВАРА</h1>
-                    <form onSubmit={createProduct} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        <input type="text" placeholder='title' value={title} onChange={(el) => setTitle(el.target.value)} />
-                        <input type="text" placeholder='desc' value={desc} onChange={(el) => setDesc(el.target.value)} />
-                        <input type="number" placeholder='price' value={price} onChange={(el) => setPrice(el.target.value)} />
-                        <select value={type} onChange={(el) => setType(el.target.value)}>
-                            <option value="" disabled>choose type</option>
-                            <option value="school">school</option>
+                <button onClick={openModal} className="button">Создать товар</button>
+            )}
+
+            {isModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h2>Создание товара</h2>
+                        <input
+                            name="title"
+                            placeholder="Название"
+                            value={newProduct.title}
+                            onChange={handleChange}
+                        />
+                        <input
+                            name="desc"
+                            placeholder="Описание"
+                            value={newProduct.desc}
+                            onChange={handleChange}
+                        />
+                        <input
+                            name="price"
+                            placeholder="Цена"
+                            value={newProduct.price}
+                            onChange={handleChange}
+                        />
+                        <select
+                            name="type"
+                            value={newProduct.type}
+                            onChange={handleChange}
+                        >
+                            <option value="">Выберите тип</option>
                             <option value="dress">dress</option>
+                            <option value="school">school</option>
                         </select>
-                        <button type="submit">create</button>
-                    </form>
+                        <div className='buuton-modal'>
+                            <button onClick={createProduct}>Создать</button>
+                            <button onClick={closeModal}>Отменить</button>
+                        </div>
+                    </div>
                 </div>
             )}
 
             <h1>ТОВАРЫ</h1>
+
             <select value={filter} onChange={handleFilterChange}>
                 <option value="">no filter</option>
                 <option value="dress">dress</option>
                 <option value="school">school</option>
             </select>
+
             <form onSubmit={SearchProduct}>
-                <input type="text" placeholder='title' value={search} onChange={(el) => setSearch(el.target.value)} />
-                <button type="submit">search</button>
+                <input
+                    type="text"
+                    placeholder='Поиск по названию'
+                    value={search}
+                    onChange={(el) => setSearch(el.target.value)}
+                />
+                <button type="submit">Найти</button>
             </form>
+
             <div className="product-container">
                 {products.map(product => (
                     <div key={product.id} className='products'>
-                        <p>{product.title}</p>
-                        <p>{product.desc}</p>
-                        <p>{product.price}</p>
-                        <p>{product.type}</p>
-                        {role === 'admin' || role === 'qa' || role==='user' && (
-                            <>
-                                <button className="button">Добавить в корзину</button>  
-                            </>
-                        )}
+                        <p><strong>Название:</strong> {product.title}</p>
+                        <p><strong>Описание:</strong> {product.desc}</p>
+                        <p><strong>Цена:</strong> {product.price}</p>
+                        <p><strong>Тип:</strong> {product.type}</p>
+
                         {role === 'admin' && (
                             <>
-                                <button className="button" onClick={() => deleteProduct(product.id)}>delete</button>
-                                <button className="button" onClick={() => updateProduct(product.id)}>update</button>
+                                <button className="button" onClick={() => deleteProduct(product.id)}>Удалить</button>
+                                <button className="button" onClick={() => updateProduct(product.id)}>Обновить</button>
                             </>
                         )}
                     </div>

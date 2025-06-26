@@ -29,9 +29,13 @@ class LoginSerializer(serializers.Serializer):
         return False
     
 class ConcertSerializer(serializers.ModelSerializer):
+    city_name = serializers.CharField(source='city.name')
+    latitude = serializers.FloatField(source='city.latitude')
+    longitude = serializers.FloatField(source='city.longitude')
+
     class Meta:
         model = ConcertModel
-        fields = '__all__'
+        fields = ['id', 'title', 'date', 'time', 'city_name', 'latitude', 'longitude']
         
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -58,7 +62,7 @@ class VideoSerializers(serializers.ModelSerializer):
     class Meta:
         model = VideoPozdravok
         fields = '__all__'
-        
+
 class VideoRequestStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = VideoRequest

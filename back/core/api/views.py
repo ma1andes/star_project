@@ -340,10 +340,8 @@ def get_video_requests(request):
                 "details": "Доступ запрещён"
             }
         }, status=status.HTTP_403_FORBIDDEN)
-
     requests = VideoRequest.objects.select_related('video').all().order_by('-created_at')
     data = []
-
     for req in requests:
         data.append({
             "id": req.id,
@@ -359,7 +357,6 @@ def get_video_requests(request):
             "created_at": req.created_at,
             "is_viewed": req.is_viewed
         })
-
     return Response({"data": data}, status=status.HTTP_200_OK)
 
 @api_view(['PATCH'])
@@ -376,31 +373,33 @@ def update_video_request_status(request, id):
     serializer = VideoRequestStatusSerializer(req, data=request.data, partial=True)
     if serializer.is_valid():
         status_value = serializer.validated_data.get('status')
-
         if status_value == 'rejected':
             req.delete()
             return Response({
                 "data": None,
                 "message": "Заявка успешно отклонена и удалена"
             }, status=status.HTTP_200_OK)
-
         elif status_value == 'accepted':
             serializer.save()
             return Response({
                 "data": serializer.data,
                 "message": "Заявка принята"
             }, status=status.HTTP_200_OK)
-
         else:
             serializer.save()
             return Response({
                 "data": serializer.data,
                 "message": "Статус обновлён"
             }, status=status.HTTP_200_OK)
-
     return Response({
         "error": {
             "code": 400,
             "details": serializer.errors
         }
     }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_concerts_for_map(request):
+    concerts = ConcertModel.objects.all().select_related('city')
+    serializer = ConcertSerializer(concerts, many=True)
+    return Response({"data": serializer.data}, status=status.HTTP_200_OK)
