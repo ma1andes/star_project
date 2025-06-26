@@ -1,24 +1,24 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from "react";
 
-function ConcertPage() {
-  const [concert, setConcert] = useState([])
+export const ConcertPage = () => {
+  const [concert, setConcert] = useState([]);
   const getConcert = async () => {
-    const response = await fetch("http://10.16.0.83:8000/api/concerts", {
-      method: 'GET',
+    const response = await fetch("http://127.0.0.1:8000/api/concerts", {
+      method: "GET",
       headers: {
-        'content-type': 'application/json'
-      }
+        "content-type": "application/json",
+      },
     });
-    if (response.ok){
-      const data = await response.json()
-      console.log(data)
-      setConcert(data.data)
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      setConcert(data.data);
     }
-  }
+  };
 
-  useEffect(()=> {
-    getConcert()
-  }, [])
+  useEffect(() => {
+    getConcert();
+  }, []);
   return (
     <div
       style={{
@@ -29,7 +29,10 @@ function ConcertPage() {
       }}
     >
       {concert.map((item) => (
-        <div key={item.id} style={{ border: "1px solid pink", borderRadius: '10px' }}>
+        <div
+          key={item.id}
+          style={{ border: "1px solid pink", borderRadius: "10px" }}
+        >
           <p>Название концерта: {item.title}</p>
           <p>Место: {item.place}</p>
           <p>
@@ -40,6 +43,4 @@ function ConcertPage() {
       ))}
     </div>
   );
-}
-
-export default ConcertPage
+};
