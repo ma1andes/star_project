@@ -1,8 +1,6 @@
-/* products.css */
-
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f7f9fc; /* Light background for the entire page */
+    background-color: #f7f9fc;
     margin: 0;
     padding: 0;
 }
@@ -14,89 +12,89 @@ h1 {
 }
 
 .products {
-    border: 1px solid #d1d1d1; /* Light border for product cards */
+    border: 1px solid #d1d1d1;
     border-radius: 10px;
-    background-color: #ffffff; /* White background for product cards */
+    background-color: #ffffff;
     padding: 15px;
     margin: 10px 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    transition: transform 0.2s; /* Smooth scaling effect on hover */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
 }
 
 .products:hover {
-    transform: scale(1.02); /* Slightly enlarge the product card on hover */
+    transform: scale(1.02);
 }
 
 .products p {
-    margin: 5px 0; /* Space between paragraphs */
-    color: #555; /* Darker text color for better readability */
+    margin: 5px 0;
+    color: #555;
 }
 
 button {
-    background-color: #4CAF50; /* Green background for buttons */
+    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
     padding: 10px 15px;
     cursor: pointer;
     font-size: 14px;
-    transition: background-color 0.3s, transform 0.2s; /* Smooth transition for hover effects */
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 button:hover {
-    background-color: #45a049; /* Darker green on hover */
-    transform: translateY(-2px); /* Slight lift effect on hover */
+    background-color: #45a049;
+    transform: translateY(-2px);
 }
 
 form {
-    background-color: #ffffff; /* White background for the form */
+    background-color: #ffffff;
     border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow for form depth */
-    margin-bottom: 30px; /* Space below the form */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
 }
 
 form input, form select {
-    border: 1px solid #d1d1d1; /* Light border for inputs */
+    border: 1px solid #d1d1d1;
     border-radius: 5px;
     padding: 10px;
-    margin: 5px -10px; /* Space between inputs */
-    font-size: 14px; /* Font size for inputs */
+    margin: 5px -10px;
+    font-size: 14px;
 }
 
 form input:focus, form select:focus {
-    border-color: #4CAF50; /* Change border color on focus */
-    outline: none; /* Remove default outline */
+    border-color: #4CAF50;
+    outline: none;
 }
 
 @media (max-width: 600px) {
     .products {
-        padding: 10px; /* Adjust padding for smaller screens */
+        padding: 10px;
     }
 
     button {
-        width: 100%; /* Full width buttons on small screens */
+        width: 100%;
     }
 }
 
-
 .product-container {
     display: flex;
-    flex-wrap: wrap; /* Позволяет переносить элементы на следующую строку */
-    justify-content: space-between; /* Распределяет пространство между элементами */
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 1200px; /* Максимальная ширина контейнера */
+    margin: 0 auto; /* Центрирует контейнер */
 }
 
 .products {
-    flex: 0 1 calc(20% - 10px); /* Устанавливает ширину продукта на 20% с учетом отступов */
-    margin: 5px; /* Отступ между продуктами */
-    box-sizing: border-box; /* Учитывает отступы и границы в ширине */
+    flex: 0 1 calc(20% - 10px);
+    margin: 5px;
+    box-sizing: border-box;
 }
 
-
 .button {
-    margin-right: 10px; /* Устанавливает отступ справа для кнопок */
+    margin-right: 10px;
 }
 
 .button:last-child {
-    margin-right: 0; /* Убирает отступ у последней кнопки */
+    margin-right: 0;
 }
