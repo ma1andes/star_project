@@ -1,0 +1,102 @@
+/* products.css */
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f9fc; /* Light background for the entire page */
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.products {
+    border: 1px solid #d1d1d1; /* Light border for product cards */
+    border-radius: 10px;
+    background-color: #ffffff; /* White background for product cards */
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: transform 0.2s; /* Smooth scaling effect on hover */
+}
+
+.products:hover {
+    transform: scale(1.02); /* Slightly enlarge the product card on hover */
+}
+
+.products p {
+    margin: 5px 0; /* Space between paragraphs */
+    color: #555; /* Darker text color for better readability */
+}
+
+button {
+    background-color: #4CAF50; /* Green background for buttons */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transition for hover effects */
+}
+
+button:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: translateY(-2px); /* Slight lift effect on hover */
+}
+
+form {
+    background-color: #ffffff; /* White background for the form */
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Shadow for form depth */
+    margin-bottom: 30px; /* Space below the form */
+}
+
+form input, form select {
+    border: 1px solid #d1d1d1; /* Light border for inputs */
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px -10px; /* Space between inputs */
+    font-size: 14px; /* Font size for inputs */
+}
+
+form input:focus, form select:focus {
+    border-color: #4CAF50; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+}
+
+@media (max-width: 600px) {
+    .products {
+        padding: 10px; /* Adjust padding for smaller screens */
+    }
+
+    button {
+        width: 100%; /* Full width buttons on small screens */
+    }
+}
+
+
+.product-container {
+    display: flex;
+    flex-wrap: wrap; /* Позволяет переносить элементы на следующую строку */
+    justify-content: space-between; /* Распределяет пространство между элементами */
+}
+
+.products {
+    flex: 0 1 calc(20% - 10px); /* Устанавливает ширину продукта на 20% с учетом отступов */
+    margin: 5px; /* Отступ между продуктами */
+    box-sizing: border-box; /* Учитывает отступы и границы в ширине */
+}
+
+
+.button {
+    margin-right: 10px; /* Устанавливает отступ справа для кнопок */
+}
+
+.button:last-child {
+    margin-right: 0; /* Убирает отступ у последней кнопки */
+}
