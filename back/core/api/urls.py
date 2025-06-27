@@ -18,6 +18,7 @@ from .views import (
     get_video_requests,
     update_video_request_status,
     get_me,
+    logout,
 )
 
 urlpatterns = [
@@ -25,6 +26,7 @@ urlpatterns = [
     path("register", register),
     path("login", login),
     path("me", get_me),
+    path("logout", logout),
     # просмотр
     path("concerts", get_concert),
     path("products", get_product),

@@ -62,6 +62,19 @@ def get_me(request):
 
 
 @api_view(["GET"])
+def logout(request):
+    if not request.user.is_authenticated:
+        return Response({"message": "Вы не авторизованы"}, status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        # Удаляем токен пользователя
+        try:
+            request.user.auth_token.delete()
+        except:
+            pass  # Токен может не существовать
+        return Response({"message": "Успешный выход из системы"}, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
 def get_concert(request):
     concert = ConcertModel.objects.all()
     serializers = ConcertSerializer(concert, many=True)

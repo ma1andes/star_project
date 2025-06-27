@@ -10,13 +10,12 @@ export const UserProvider = ({ children }) => {
     try {
       setLoading(true);
       const token = localStorage.getItem("auth_token");
-      
+
       if (!token) {
-        console.log("No auth token found");
         setUser(null);
         return;
       }
-      
+
       const res = await fetch("http://127.0.0.1:8000/api/me", {
         method: "GET",
         headers: {
@@ -24,7 +23,6 @@ export const UserProvider = ({ children }) => {
         },
       });
 
-      
       if (res.ok) {
         const data = await res.json();
         setUser(data.user);
@@ -32,8 +30,6 @@ export const UserProvider = ({ children }) => {
         console.error("Failed to fetch user, status:", res.status);
         setUser(null);
         localStorage.removeItem("auth_token");
-        localStorage.removeItem("isAdmin");
-        localStorage.removeItem("role");
       }
     } catch (err) {
       console.error("Failed to connect to server: ", err);
@@ -51,15 +47,10 @@ export const UserProvider = ({ children }) => {
     user,
     setUser,
     fetchUser,
-    loading
+    loading,
   };
 
-
-  return (
-    <UserContext.Provider value={value}>
-      {children}
-    </UserContext.Provider>
-  );
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 
 export const useUser = () => {

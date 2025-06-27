@@ -3,6 +3,7 @@ import { useUser } from "../../utils/UserContext";
 import { CreateProduct } from "./Form/CreateProduct";
 import { UpdateProduct } from "./Form/UpdateProduct";
 import "./products.css";
+import { ConfirmModal } from "../../components/ConfirmModal";
 
 export const ProductPage = () => {
   const [products, setProducts] = useState([]);
@@ -10,6 +11,8 @@ export const ProductPage = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
   const { user, loading: userLoading } = useUser();
 
   const deleteProduct = async (id) => {
@@ -154,7 +157,13 @@ export const ProductPage = () => {
     }
   };
 
+  const confirmDelete = (product) => {
+    setProductToDelete(product);
+    setIsConfirmOpen(true);
+  };
+
   return (
+    
     <div>
       {!userLoading && user?.role === "admin" && (
         <CreateProduct onCreateProduct={loadProduct} />
@@ -187,6 +196,10 @@ export const ProductPage = () => {
             <p>{product.desc}</p>
             <p>{product.price}</p>
             <p>{product.type}</p>
+            <img
+              src={`http://127.0.0.1:8000${product.img}`}
+              alt="Картинка товара"
+            />
             {!userLoading && user?.role !== "admin" && (
               <button
                 className="button"
@@ -199,7 +212,7 @@ export const ProductPage = () => {
               <>
                 <button
                   className="button"
-                  onClick={() => deleteProduct(product.id)}
+                  onClick={() => confirmDelete(product)}
                 >
                   delete
                 </button>
@@ -222,6 +235,23 @@ export const ProductPage = () => {
           onClose={closeUpdateModal}
         />
       )}
+
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        onClose={() => {
+          setIsConfirmOpen(false);
+          setProductToDelete(null);
+        }}
+        onConfirm={() => {
+          if (productToDelete) {
+            deleteProduct(productToDelete.id);
+          }
+        }}
+        title="Удаление товара"
+        message={`Вы уверены, что хотите удалить "${productToDelete?.title}"?`}
+        confirmText="Удалить"
+        cancelText="Отмена"
+      />
     </div>
   );
 };

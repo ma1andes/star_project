@@ -9,6 +9,7 @@ export const UpdateProduct = ({ product, onUpdate, onClose }) => {
     desc: "",
     type: "",
     price: 0,
+    img: null
   });
 
   useEffect(() => {
@@ -18,9 +19,26 @@ export const UpdateProduct = ({ product, onUpdate, onClose }) => {
         desc: product.desc || "",
         type: product.type || "",
         price: product.price || 0,
+        img: null // Новое изображение, если пользователь выберет
       });
     }
   }, [product]);
+
+  const handleChange = (e) => {
+    const { name, value, type, files } = e.target;
+    
+    if (type === 'file') {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: files[0] || null,
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
@@ -39,13 +57,24 @@ export const UpdateProduct = ({ product, onUpdate, onClose }) => {
       setIsLoading(true);
       setMessage("");
       
+      // Создаем FormData для отправки файла
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('desc', formData.desc);
+      formDataToSend.append('type', formData.type);
+      formDataToSend.append('price', formData.price);
+      
+      if (formData.img) {
+        formDataToSend.append('img', formData.img);
+      }
+      
       const response = await fetch(`http://127.0.0.1:8000/api/product/${product.id}`, {
         method: "PATCH",
         headers: {
-          "content-type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+          // Убираем content-type, чтобы браузер сам установил правильный для FormData
         },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
       
       if (response.status === 200) {
@@ -104,7 +133,7 @@ export const UpdateProduct = ({ product, onUpdate, onClose }) => {
           </button>
         </div>
         
-        <form onSubmit={handleSubmitForm} className="modal-form">
+        <form onSubmit={handleSubmitForm} className="modal-form" encType="multipart/form-data">
           {message && (
             <p className={`message ${message.includes("успешно") ? "success" : "error"}`}>
               {message}
@@ -119,7 +148,7 @@ export const UpdateProduct = ({ product, onUpdate, onClose }) => {
               name="title"
               placeholder="title"
               value={formData.title}
-              onChange={(el) => handleInputChange("title", el.target.value)}
+              onChange={handleChange}
               required
             />
           </div>
@@ -132,7 +161,7 @@ export const UpdateProduct = ({ product, onUpdate, onClose }) => {
               name="desc"
               placeholder="desc"
               value={formData.desc}
-              onChange={(el) => handleInputChange("desc", el.target.value)}
+              onChange={handleChange}
               required
             />
           </div>
@@ -147,7 +176,7 @@ export const UpdateProduct = ({ product, onUpdate, onClose }) => {
               min="0"
               step="0.01"
               value={formData.price}
-              onChange={(el) => handleInputChange("price", Number(el.target.value) || 0)}
+              onChange={handleChange}
               required
             />
           </div>
@@ -158,7 +187,7 @@ export const UpdateProduct = ({ product, onUpdate, onClose }) => {
               id="type"
               name="type"
               value={formData.type}
-              onChange={(el) => handleInputChange("type", el.target.value)}
+              onChange={handleChange}
               required
             >
               <option value="" disabled>
@@ -167,6 +196,34 @@ export const UpdateProduct = ({ product, onUpdate, onClose }) => {
               <option value="school">school</option>
               <option value="dress">dress</option>
             </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="img">Изображение:</label>
+            <input
+              id="img"
+              type="file"
+              name="img"
+              accept="image/*"
+              onChange={handleChange}
+            />
+            {formData.img && (
+              <img
+                src={URL.createObjectURL(formData.img)}
+                alt="Preview"
+                style={{ width: "100px", height: "100px", marginTop: "10px" }}
+              />
+            )}
+            {product.img && !formData.img && (
+              <div style={{ marginTop: "10px" }}>
+                <p>Текущее изображение:</p>
+                <img
+                  src={`http://127.0.0.1:8000${product.img}`}
+                  alt="Current"
+                  style={{ width: "100px", height: "100px" }}
+                />
+              </div>
+            )}
           </div>
           
           <div className="modal-actions">
