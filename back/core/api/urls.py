@@ -19,6 +19,7 @@ from .views import (
     update_video_request_status,
     get_me,
     logout,
+    get_concerts_for_map,
 )
 
 urlpatterns = [
@@ -47,4 +48,5 @@ urlpatterns = [
     path("video-create/", create_video),
     path("video-request/", get_video_requests),
     path("video-update/<int:id>", update_video_request_status),
+    path("get-concert-maps/", get_concerts_for_map),
 ]

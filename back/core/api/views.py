@@ -64,14 +64,18 @@ def get_me(request):
 @api_view(["GET"])
 def logout(request):
     if not request.user.is_authenticated:
-        return Response({"message": "Вы не авторизованы"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(
+            {"message": "Вы не авторизованы"}, status=status.HTTP_401_UNAUTHORIZED
+        )
     else:
         # Удаляем токен пользователя
         try:
             request.user.auth_token.delete()
         except:
             pass  # Токен может не существовать
-        return Response({"message": "Успешный выход из системы"}, status=status.HTTP_200_OK)
+        return Response(
+            {"message": "Успешный выход из системы"}, status=status.HTTP_200_OK
+        )
 
 
 @api_view(["GET"])
@@ -351,7 +355,6 @@ def get_video_requests(request):
         VideoRequest.objects.select_related("video").all().order_by("-created_at")
     )
     data = []
-
     for req in requests:
         data.append(
             {
@@ -411,3 +414,10 @@ def update_video_request_status(request, id):
         {"error": {"code": 400, "details": serializer.errors}},
         status=status.HTTP_400_BAD_REQUEST,
     )
+
+
+@api_view(["GET"])
+def get_concerts_for_map(request):
+    concerts = ConcertModel.objects.all().select_related("city")
+    serializer = ConcertSerializer(concerts, many=True)
+    return Response({"data": serializer.data}, status=status.HTTP_200_OK)

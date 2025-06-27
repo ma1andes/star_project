@@ -48,6 +48,10 @@ class UserAuthSerializer(serializers.ModelSerializer):
 
 
 class ConcertSerializer(serializers.ModelSerializer):
+    city_name = serializers.CharField(source='city.name')
+    latitude = serializers.FloatField(source='city.latitude')
+    longitude = serializers.FloatField(source='city.longitude')
+
     class Meta:
         model = ConcertModel
         fields = "__all__"

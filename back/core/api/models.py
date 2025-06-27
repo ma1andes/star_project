@@ -16,11 +16,25 @@ class UserModel(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name', 'username', 'role']
     
+class City(models.Model):
+    name = models.CharField(max_length=100, unique=True) # Название города
+    slug = models.SlugField(unique=True)
+    latitude = models.FloatField() # Широта
+    longitude = models.FloatField() # Долгота
+
+    def __str__(self):
+        return self.name
+
+
 class ConcertModel(models.Model):
-    time = models.TimeField(auto_now_add=True)
-    title = models.CharField(max_length=43)
-    place = models.CharField(max_length=43)
-    date = models.DateField(auto_now_add=True)
+    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name="Город")
+    title = models.CharField(max_length=100)
+    date = models.DateField()
+    time = models.TimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} в {self.city.name}"
     
 class ProductModel(models.Model):
     TYPE = {

@@ -1,189 +1,143 @@
 import { useState } from "react";
 
 export const CreateProduct = ({ onCreateProduct }) => {
-  const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [formData, setFormData] = useState({
+  const [newProduct, setNewProduct] = useState({
     title: "",
     desc: "",
     type: "",
-    price: 0,
-    img: null
+    price: "",
+    img: null,
   });
 
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
-    
-    if (type === 'file') {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: files[0] || null,
-      }));
+    const { name, value, files, type } = e.target;
+    if (type === "file") {
+      setNewProduct((prev) => ({ ...prev, [name]: files[0] || null }));
     } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
+      setNewProduct((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  const handleSubmitForm = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !formData.title ||
-      !formData.desc ||
-      !formData.type ||
-      !formData.price
-    ) {
-      setMessage("Заполните все обязательные поля");
-      return;
-    }
-
-    if (formData.price <= 0) {
-      setMessage("Цена должна быть больше 0");
-      return;
-    }
-
     try {
-      setIsLoading(true);
-      setMessage("");
-
-      // Создаем FormData для отправки файла
-      const formDataToSend = new FormData();
-      formDataToSend.append('title', formData.title);
-      formDataToSend.append('desc', formData.desc);
-      formDataToSend.append('type', formData.type);
-      formDataToSend.append('price', formData.price);
-      
-      if (formData.img) {
-        formDataToSend.append('img', formData.img);
+      const formData = new FormData();
+      formData.append("title", newProduct.title);
+      formData.append("desc", newProduct.desc);
+      formData.append("price", newProduct.price);
+      formData.append("type", newProduct.type);
+      if (newProduct.img) {
+        formData.append("img", newProduct.img);
       }
 
       const response = await fetch("http://127.0.0.1:8000/api/product", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-          // Убираем content-type, чтобы браузер сам установил правильный для FormData
         },
-        body: formDataToSend,
+        body: formData,
       });
 
       if (response.status === 201) {
-        setFormData({
-          title: "",
-          desc: "",
-          type: "",
-          price: 0,
-          img: null,
-        });
-        setMessage("Товар успешно создан!");
-
-        // Вызываем функцию обновления списка товаров
         if (onCreateProduct && typeof onCreateProduct === "function") {
-          try {
-            await onCreateProduct();
-          } catch (error) {
-            console.error("Error refreshing products:", error);
-          }
+          await onCreateProduct();
         }
+
+        // Очистка формы и закрытие модального окна
+        setNewProduct({ title: "", desc: "", type: "", price: "", img: null });
+        closeModal();
       } else {
-        const errorData = await response.json();
-        setMessage(
-          errorData.errors?.details || "Произошла ошибка при создании товара"
-        );
+        console.error("Failed to create product");
       }
     } catch (err) {
-      console.error("Failed to connect to server: ", err);
-      setMessage("Ошибка подключения к серверу");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    // Очищаем сообщение при изменении полей
-    if (message) {
-      setMessage("");
+      console.error("Error creating product", err);
     }
   };
 
   return (
-    <>
-      {isLoading ? (
-        <div>Загрузка...</div>
-      ) : (
-        <div className="container">
-          <h1>СОЗДАНИЕ ТОВАРА</h1>
-          <form
-            onSubmit={handleSubmitForm}
-            style={{ display: "flex", flexDirection: "column", gap: "10px" }}
-            encType="multipart/form-data"
-          >
-            {message && <p style={{ fontWeight: "bold" }}>{message}</p>}
-            <input
-              type="text"
-              name="title"
-              placeholder="title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              name="desc"
-              placeholder="desc"
-              value={formData.desc}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="number"
-              name="price"
-              placeholder="price"
-              min="0"
-              step="0.01"
-              value={formData.price}
-              onChange={handleChange}
-              required
-            />
-            <select
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              required
-            >
-              <option value="" disabled>
-                choose type
-              </option>
-              <option value="school">school</option>
-              <option value="dress">dress</option>
-            </select>
-            <input 
-              type="file" 
-              name="img"
-              accept="image/*"
-              onChange={handleChange} 
-            />
-            {formData.img && (
-              <img
-                src={URL.createObjectURL(formData.img)}
-                alt="Preview"
-                style={{ width: "100px", height: "100px" }}
+    <div>
+      {/* Кнопка открытия модального окна */}
+      <button className="button" onClick={openModal} style={{ marginBottom: 16 }}>
+        Создать товар
+      </button>
+
+      {isModalOpen && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>СОЗДАНИЕ ТОВАРА</h2>
+              <button className="modal-close" onClick={closeModal}>
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="modal-form">
+              <input
+                name="title"
+                placeholder="Название"
+                value={newProduct.title}
+                onChange={handleChange}
+                required
               />
-            )}
-            <button type="submit" disabled={isLoading}>
-              {isLoading ? "Создание..." : "create"}
-            </button>
-          </form>
+              <input
+                name="desc"
+                placeholder="Описание"
+                value={newProduct.desc}
+                onChange={handleChange}
+                required
+              />
+              <input
+                name="price"
+                type="number"
+                placeholder="Цена"
+                value={newProduct.price}
+                onChange={handleChange}
+                required
+                min="0"
+                step="0.01"
+              />
+
+              <select name="type" value={newProduct.type} onChange={handleChange} required>
+                <option value="" disabled>
+                  Выберите тип
+                </option>
+                <option value="dress">dress</option>
+                <option value="school">school</option>
+              </select>
+
+              <input
+                type="file"
+                name="img"
+                accept="image/*"
+                onChange={handleChange}
+              />
+
+              {newProduct.img && (
+                <img
+                  src={URL.createObjectURL(newProduct.img)}
+                  alt="Preview"
+                  style={{ width: "100px", height: "100px", objectFit: "cover", marginTop: 8 }}
+                />
+              )}
+
+              <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
+                <button type="submit" className="btn-primary">
+                  Создать
+                </button>
+                <button type="button" onClick={closeModal} className="btn-secondary">
+                  Отмена
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
