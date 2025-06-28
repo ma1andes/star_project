@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUser, apiFetch, ConfirmModal } from "../../shared";
-import { CreateProduct } from "./Form/CreateProduct";
-import { UpdateProduct } from "./Form/UpdateProduct";
+import { CreateProduct } from "./Form/CreateForm/CreateForm";
+import { UpdateProduct } from "./Form/UpdateForm/UpdateForm";
 import "./products.css";
 
 export const ProductPage = () => {
