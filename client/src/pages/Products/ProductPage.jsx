@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useUser, apiFetch, ConfirmModal } from "../../shared";
+import { useUser, apiFetch, ConfirmModal, Card, CardContainer } from "../../shared";
 import { CreateProduct } from "./Form/CreateForm/CreateForm";
 import { UpdateProduct } from "./Form/UpdateForm/UpdateForm";
 import "./products.css";
@@ -107,7 +107,7 @@ export const ProductPage = () => {
 
   const handleAddToCart = async (productId) => {
     try {
-      await apiFetch(`/cart/${productId}`, {
+      await apiFetch(`/cart/add/${productId}`, {
         method: "POST",
         requireAuth: true,
       });
@@ -135,58 +135,58 @@ export const ProductPage = () => {
 
       <select value={filter} onChange={handleFilterChange}>
         <option value="">no filter</option>
-        <option value="dress">dress</option>
-        <option value="school">school</option>
+        <option value="dress">Платья</option>
+        <option value="school">Школа</option>
       </select>
 
       <form onSubmit={SearchProduct}>
         <input
           type="text"
-          placeholder="title"
+          placeholder="Название"
           value={search}
           onChange={(el) => setSearch(el.target.value)}
         />
-        <button type="submit">search</button>
+        <button type="submit">Поиск</button>
       </form>
 
-      <div className="product-container">
+      <CardContainer>
         {products.map((product) => (
-          <div key={product.id} className="products">
-            <p>{product.title}</p>
-            <p>{product.desc}</p>
-            <p>{product.price}</p>
-            <p>{product.type}</p>
+          <Card key={product.id}>
             <img
               src={`http://127.0.0.1:8000${product.img}`}
-              alt="Картинка товара"
+              alt={product.title}
             />
-            {!userLoading && user?.role !== "admin" && (
+            <h2>{product.title}</h2>
+            <h3>{product.desc}</h3>
+            <p>{product.price}</p>
+            <p>{product.type}</p>
+
+            <div className="button-group">
               <button
-                className="button"
                 onClick={() => handleAddToCart(product.id)}
               >
                 Добавить в корзину
               </button>
-            )}
-            {!userLoading && user?.role === "admin" && (
-              <>
-                <button
-                  className="button"
-                  onClick={() => confirmDelete(product)}
-                >
-                  delete
-                </button>
-                <button
-                  className="button"
-                  onClick={() => updateProduct(product)}
-                >
-                  update
-                </button>
-              </>
-            )}
-          </div>
+              {!userLoading && user?.role === "admin" && (
+                <>
+                  <button
+                    className="delete-btn"
+                    onClick={() => confirmDelete(product)}
+                  >
+                    Удалить
+                  </button>
+                  <button
+                    className="update-btn"
+                    onClick={() => updateProduct(product)}
+                  >
+                    Изменить
+                  </button>
+                </>
+              )}
+            </div>
+          </Card>
         ))}
-      </div>
+      </CardContainer>
 
       {editingProduct && (
         <UpdateProduct

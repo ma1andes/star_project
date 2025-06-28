@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { apiFetch, FormBuilder } from "../../../../shared";
+import { apiFetch, FormBuilder, Modal } from "../../../../shared";
 import { formFields } from "./configs";
 
 export const CreateProduct = ({ onCreateProduct }) => {
@@ -13,7 +13,6 @@ export const CreateProduct = ({ onCreateProduct }) => {
     try {
       setIsLoading(true);
 
-      // Создаем FormData для отправки файлов
       const formData = new FormData();
       formData.append("title", data.title);
       formData.append("desc", data.desc);
@@ -49,30 +48,22 @@ export const CreateProduct = ({ onCreateProduct }) => {
         Создать товар
       </button>
 
-      {isModalOpen && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>СОЗДАНИЕ ТОВАРА</h2>
-              <button className="modal-close" onClick={closeModal} disabled={isLoading}>
-                ×
-              </button>
-            </div>
-
-            <div className="modal-form">
-              <FormBuilder
-                fields={formFields}
-                onSubmit={handleFormSubmit}
-                submitText="Создать товар"
-                isLoading={isLoading}
-                showCancelButton={true}
-                onCancel={closeModal}
-                cancelText="Отмена"
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title="СОЗДАНИЕ ТОВАРА"
+        isLoading={isLoading}
+      >
+        <FormBuilder
+          fields={formFields}
+          onSubmit={handleFormSubmit}
+          submitText="Создать товар"
+          isLoading={isLoading}
+          showCancelButton={true}
+          onCancel={closeModal}
+          cancelText="Отмена"
+        />
+      </Modal>
     </div>
   );
 };

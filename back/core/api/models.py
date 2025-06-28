@@ -50,10 +50,16 @@ class ProductModel(models.Model):
     
 class CartModel(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user.name} - {self.user.email}"
     
 class CartItemModel(models.Model):
     cart = models.ForeignKey(CartModel, on_delete=models.CASCADE)
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.cart.user.name} - {self.product.title}"
     
 class QAmodel(models.Model):
     STATUS = {

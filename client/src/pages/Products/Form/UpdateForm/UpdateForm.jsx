@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { apiFetch, FormBuilder } from "../../../../shared";
+import { apiFetch, FormBuilder, Modal } from "../../../../shared";
 import { formFields } from "../CreateForm/configs.js";
 
 export const UpdateProduct = ({ product, onUpdate, onClose }) => {
@@ -64,54 +64,48 @@ export const UpdateProduct = ({ product, onUpdate, onClose }) => {
   if (!product) return null;
 
   return (
-    <div className="modal-overlay" onClick={handleClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>РЕДАКТИРОВАНИЕ ТОВАРА</h2>
-          <button className="modal-close" onClick={handleClose} disabled={isLoading}>
-            ×
-          </button>
-        </div>
-        
-        <div className="modal-form">
-          {message && (
-            <p 
-              style={{ 
-                color: message.includes("успешно") ? "green" : "red",
-                marginBottom: "16px",
-                padding: "8px",
-                backgroundColor: message.includes("успешно") ? "#d4edda" : "#f8d7da",
-                border: `1px solid ${message.includes("успешно") ? "#c3e6cb" : "#f5c6cb"}`,
-                borderRadius: "4px"
-              }}
-            >
-              {message}
-            </p>
-          )}
+    <Modal
+      isOpen={true}
+      onClose={handleClose}
+      title="РЕДАКТИРОВАНИЕ ТОВАРА"
+      isLoading={isLoading}
+    >
+      {message && (
+        <p 
+          style={{ 
+            color: message.includes("успешно") ? "green" : "red",
+            marginBottom: "16px",
+            padding: "8px",
+            backgroundColor: message.includes("успешно") ? "#d4edda" : "#f8d7da",
+            border: `1px solid ${message.includes("успешно") ? "#c3e6cb" : "#f5c6cb"}`,
+            borderRadius: "4px"
+          }}
+        >
+          {message}
+        </p>
+      )}
 
-          {product.img && (
-            <div style={{ marginBottom: "16px" }}>
-              <p style={{ marginBottom: "8px", fontWeight: "500" }}>Текущее изображение:</p>
-              <img
-                src={`http://127.0.0.1:8000${product.img}`}
-                alt="Current"
-                style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "4px" }}
-              />
-            </div>
-          )}
-          
-          <FormBuilder
-            fields={formFields}
-            onSubmit={handleFormSubmit}
-            submitText="Обновить товар"
-            defaultValues={defaultValues}
-            isLoading={isLoading}
-            showCancelButton={true}
-            onCancel={handleClose}
-            cancelText="Отмена"
+      {product.img && (
+        <div style={{ marginBottom: "16px" }}>
+          <p style={{ marginBottom: "8px", fontWeight: "500" }}>Текущее изображение:</p>
+          <img
+            src={`http://127.0.0.1:8000${product.img}`}
+            alt="Current"
+            style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "4px" }}
           />
         </div>
-      </div>
-    </div>
+      )}
+      
+      <FormBuilder
+        fields={formFields}
+        onSubmit={handleFormSubmit}
+        submitText="Обновить товар"
+        defaultValues={defaultValues}
+        isLoading={isLoading}
+        showCancelButton={true}
+        onCancel={handleClose}
+        cancelText="Отмена"
+      />
+    </Modal>
   );
 }; 

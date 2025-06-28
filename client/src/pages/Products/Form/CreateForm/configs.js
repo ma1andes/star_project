@@ -31,8 +31,8 @@ export const formFields = [
       type: "select",
       required: true,
       options: [
-        { value: "dress", label: "Dress" },
-        { value: "school", label: "School" }
+        { value: "dress", label: "Платье" },
+        { value: "school", label: "Школа" }
       ]
     },
     {
