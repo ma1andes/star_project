@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { apiFetch } from "../../shared";
 
 export const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -30,20 +31,16 @@ export const RegisterPage = () => {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/register", {
+      await apiFetch("/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
+        requireAuth: false,
       });
 
-      if (response.status === 201) {
-        navigate("/login");
-      } else {
-        const errorData = await response.json();
-        alert("Ошибка: " + JSON.stringify(errorData));
-      }
+      navigate("/login");
     } catch (error) {
       console.error("Ошибка при отправке запроса:", error);
+      alert("Ошибка: " + error.message);
     }
   };
 

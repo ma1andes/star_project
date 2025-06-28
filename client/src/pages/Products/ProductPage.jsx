@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { useUser } from "../../utils/UserContext";
+import { useUser, apiFetch, ConfirmModal } from "../../shared";
 import { CreateProduct } from "./Form/CreateProduct";
 import { UpdateProduct } from "./Form/UpdateProduct";
 import "./products.css";
-import { ConfirmModal } from "../../components/ConfirmModal";
 
 export const ProductPage = () => {
   const [products, setProducts] = useState([]);
@@ -17,20 +16,13 @@ export const ProductPage = () => {
 
   const deleteProduct = async (id) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/product/${id}`, {
+      await apiFetch(`/product/${id}`, {
         method: "DELETE",
-        headers: {
-          "content-type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-        },
+        requireAuth: true,
       });
-      if (response.status === 200) {
-        setProducts((prevProducts) =>
-          prevProducts.filter((product) => product.id !== id)
-        );
-      } else {
-        console.error("Failed to delete product");
-      }
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product.id !== id)
+      );
     } catch (error) {
       console.error("Error deleting product:", error);
     }
@@ -55,18 +47,14 @@ export const ProductPage = () => {
   const loadProduct = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://127.0.0.1:8000/api/products", {
-        headers: { "content-type": "application/json" },
+      const data = await apiFetch("/products", {
+        method: "GET",
+        requireAuth: false,
       });
-      if (response.status === 200) {
-        const data = await response.json();
-        setProducts(data.data);
-      } else {
-        setProducts([]);
-        console.error("Failed to load products");
-      }
+      setProducts(data.data);
     } catch (error) {
       console.error("Error loading products:", error);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -80,20 +68,11 @@ export const ProductPage = () => {
     }
 
     try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/products?title=${encodeURIComponent(
-          search
-        )}`,
-        {
-          headers: { "content-type": "application/json" },
-        }
-      );
-      if (response.status === 200) {
-        const data = await response.json();
-        setProducts(data.data);
-      } else {
-        console.error("Failed to search products");
-      }
+      const data = await apiFetch(`/products?title=${encodeURIComponent(search)}`, {
+        method: "GET",
+        requireAuth: false,
+      });
+      setProducts(data.data);
     } catch (error) {
       console.error("Error searching products:", error);
     }
@@ -106,20 +85,11 @@ export const ProductPage = () => {
     }
 
     try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/products?type=${encodeURIComponent(
-          selectedFilter
-        )}`,
-        {
-          headers: { "content-type": "application/json" },
-        }
-      );
-      if (response.status === 200) {
-        const data = await response.json();
-        setProducts(data.data);
-      } else {
-        console.error("Failed to filter products");
-      }
+      const data = await apiFetch(`/products?type=${encodeURIComponent(selectedFilter)}`, {
+        method: "GET",
+        requireAuth: false,
+      });
+      setProducts(data.data);
     } catch (error) {
       console.error("Error filtering products:", error);
     }
@@ -137,21 +107,11 @@ export const ProductPage = () => {
 
   const handleAddToCart = async (productId) => {
     try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/cart/${productId}`,
-        {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-          },
-        }
-      );
-      if (response.status === 201) {
-        alert("Товар добавлен в корзину!");
-      } else {
-        console.error("Failed to add product to cart");
-      }
+      await apiFetch(`/cart/${productId}`, {
+        method: "POST",
+        requireAuth: true,
+      });
+      alert("Товар добавлен в корзину!");
     } catch (error) {
       console.error("Error adding product to cart:", error);
     }

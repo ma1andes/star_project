@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { apiFetch } from "../../../shared";
 
 export const CreateProduct = ({ onCreateProduct }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,25 +37,19 @@ export const CreateProduct = ({ onCreateProduct }) => {
         formData.append("img", newProduct.img);
       }
 
-      const response = await fetch("http://127.0.0.1:8000/api/product", {
+      await apiFetch("/product", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-        },
         body: formData,
+        requireAuth: true,
       });
 
-      if (response.status === 201) {
-        if (onCreateProduct && typeof onCreateProduct === "function") {
-          await onCreateProduct();
-        }
-
-        // Очистка формы и закрытие модального окна
-        setNewProduct({ title: "", desc: "", type: "", price: "", img: null });
-        closeModal();
-      } else {
-        console.error("Failed to create product");
+      if (onCreateProduct && typeof onCreateProduct === "function") {
+        await onCreateProduct();
       }
+
+      // Очистка формы и закрытие модального окна
+      setNewProduct({ title: "", desc: "", type: "", price: "", img: null });
+      closeModal();
     } catch (err) {
       console.error("Error creating product", err);
     }

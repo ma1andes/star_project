@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../../utils/UserContext";
+import { useUser, apiFetch } from "../../shared";
 
 export const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -18,24 +18,18 @@ export const LoginPage = () => {
 
     try {
       setIsLoading(true);
-      const response = await fetch("http://127.0.0.1:8000/api/login", {
+      const data = await apiFetch("/login", {
         method: "POST",
-        headers: { "content-type": "application/json" },
         body: JSON.stringify(formData),
+        requireAuth: false,
       });
 
-      const data = await response.json();
-
-      if (response.status === 200) {
-        localStorage.setItem("auth_token", data.data.auth_token);
-        await fetchUser();
-        navigate("/product");
-      } else {
-        setError(data.errors?.details || "Ошибка входа");
-      }
+      localStorage.setItem("auth_token", data.data.auth_token);
+      await fetchUser();
+      navigate("/product");
     } catch (err) {
       console.error("Login error:", err);
-      setError("Ошибка подключения к серверу");
+      setError(err.message || "Ошибка входа");
     } finally {
       setIsLoading(false);
     }

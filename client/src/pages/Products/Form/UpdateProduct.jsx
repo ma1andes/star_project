@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { apiFetch } from "../../../shared";
 
 export const UpdateProduct = ({ product, onUpdate, onClose }) => {
   const [message, setMessage] = useState("");
@@ -68,37 +69,28 @@ export const UpdateProduct = ({ product, onUpdate, onClose }) => {
         formDataToSend.append('img', formData.img);
       }
       
-      const response = await fetch(`http://127.0.0.1:8000/api/product/${product.id}`, {
+      const updatedProduct = await apiFetch(`/product/${product.id}`, {
         method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-          // Убираем content-type, чтобы браузер сам установил правильный для FormData
-        },
         body: formDataToSend,
+        requireAuth: true,
       });
       
-      if (response.status === 200) {
-        const updatedProduct = await response.json();
-        setMessage("Товар успешно обновлен!");
-        
-        if (onUpdate && typeof onUpdate === 'function') {
-          try {
-            await onUpdate(updatedProduct.data);
-          } catch (error) {
-            console.error("Error updating products list:", error);
-          }
+      setMessage("Товар успешно обновлен!");
+      
+      if (onUpdate && typeof onUpdate === 'function') {
+        try {
+          await onUpdate(updatedProduct.data);
+        } catch (error) {
+          console.error("Error updating products list:", error);
         }
-        
-        setTimeout(() => {
-          onClose();
-        }, 1000);
-      } else {
-        const errorData = await response.json();
-        setMessage(errorData.errors?.details || "Произошла ошибка при обновлении товара");
       }
+      
+      setTimeout(() => {
+        onClose();
+      }, 1000);
     } catch (err) {
       console.error("Failed to connect to server: ", err);
-      setMessage("Ошибка подключения к серверу");
+      setMessage(err.message || "Ошибка подключения к серверу");
     } finally {
       setIsLoading(false);
     }

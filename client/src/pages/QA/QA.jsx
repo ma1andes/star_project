@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { apiFetch } from "../../shared";
 import "./qastyle.css";
 
 export const QA = () => {
@@ -8,45 +9,42 @@ export const QA = () => {
   const role = localStorage.getItem("role");
 
   const loadQA = async () => {
-    const response = await fetch("http://127.0.0.1:8000/api/qa/vopr", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-      },
-    });
-    const data = await response.json();
-    if (response.status === 200) {
+    try {
+      const data = await apiFetch("/qa/vopr", {
+        method: "GET",
+        requireAuth: true,
+      });
       setQa(data.data);
+    } catch (error) {
+      console.error("Error loading QA:", error);
     }
   };
 
   const onSubmitQA = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://127.0.0.1:8000/api/qa", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ comment, status }),
-    });
-    const data = await response.json();
-    if (response.ok) {
+    try {
+      const data = await apiFetch("/qa", {
+        method: "POST",
+        body: JSON.stringify({ comment, status }),
+        requireAuth: true,
+      });
       setQa((prevQa) => [...prevQa, data.data]);
       setComment("");
       setStatus("");
+    } catch (error) {
+      console.error("Error submitting QA:", error);
     }
   };
 
   const DeleteQA = async (id) => {
-    const response = await fetch(`http://127.0.0.1:8000/api/qa/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-        "Content-Type": "application/json",
-      },
-    });
-    if (response.ok) {
+    try {
+      await apiFetch(`/qa/${id}`, {
+        method: "DELETE",
+        requireAuth: true,
+      });
       setQa((prev) => prev.filter((el) => el.id !== id));
+    } catch (error) {
+      console.error("Error deleting QA:", error);
     }
   };
 

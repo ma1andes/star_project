@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { useUser } from "../utils/UserContext";
+import { useUser, apiFetch } from "../shared";
 import "./Layout.css";
 
 function Layout() {
@@ -8,25 +8,15 @@ function Layout() {
   const logout = async (e) => {
     e?.preventDefault();
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/logout", {
+      const res = await apiFetch("/logout", {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-        },
+        requireAuth: true,
       });
-      if (res.ok) {
-        localStorage.removeItem("auth_token");
-        await fetchUser();
-        setTimeout(() => {
-          navigate("/login");
-        }, 350);
-      } else if (res.status === 401) {
-        localStorage.removeItem("auth_token");
-        await fetchUser();
-        setTimeout(() => {
-          navigate("/login");
-        }, 350);
-      }
+      localStorage.removeItem("auth_token");
+      await fetchUser();
+      setTimeout(() => {
+        navigate("/login");
+      }, 350);
     } catch (err) {
       console.error("failed to connect to server: ", err);
       localStorage.removeItem("auth_token");

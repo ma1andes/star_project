@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { apiFetch } from "./apiFetch";
 
 const UserContext = createContext(null);
 
@@ -16,24 +17,16 @@ export const UserProvider = ({ children }) => {
         return;
       }
 
-      const res = await fetch("http://127.0.0.1:8000/api/me", {
+      const data = await apiFetch("/me", {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        requireAuth: true,
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
-      } else {
-        console.error("Failed to fetch user, status:", res.status);
-        setUser(null);
-        localStorage.removeItem("auth_token");
-      }
+      setUser(data.user);
     } catch (err) {
       console.error("Failed to connect to server: ", err);
       setUser(null);
+      localStorage.removeItem("auth_token");
     } finally {
       setLoading(false);
     }

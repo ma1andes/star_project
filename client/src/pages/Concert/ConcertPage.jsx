@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
+import { apiFetch } from "../../shared";
 
 export const ConcertPage = () => {
   const [concert, setConcert] = useState([]);
   const getConcert = async () => {
-    const response = await fetch("http://127.0.0.1:8000/api/concerts", {
-      method: "GET",
-      headers: {
-        "content-type": "application/json",
-      },
-    });
-    if (response.ok) {
-      const data = await response.json();
+    try {
+      const data = await apiFetch("/concerts", {
+        method: "GET",
+        requireAuth: false,
+      });
       console.log(data);
       setConcert(data.data);
+    } catch (error) {
+      console.error("Error loading concerts:", error);
     }
   };
 
