@@ -70,11 +70,12 @@ class CartSerializer(serializers.ModelSerializer):
     img = serializers.CharField(source="product.img")
     title = serializers.CharField(source="product.title")
     desc = serializers.CharField(source="product.desc")
+    type = serializers.CharField(source="product.type")
     price = serializers.CharField(source="product.title")
 
     class Meta:
         model = ProductModel
-        fields = ["id", "product_id", "img", "title", "desc", "price"]
+        fields = ["id", "product_id", "img", "title",'type', "desc", "price"]
 
 
 class QAserializers(serializers.ModelSerializer):

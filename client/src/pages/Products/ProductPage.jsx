@@ -107,7 +107,7 @@ export const ProductPage = () => {
 
   const handleAddToCart = async (productId) => {
     try {
-      await apiFetch(`/cart/add/${productId}`, {
+      await apiFetch(`/cart/${productId}`, {
         method: "POST",
         requireAuth: true,
       });
