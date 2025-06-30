@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { useUser, apiFetch, ConfirmModal, Card, CardContainer } from "../../shared";
+import {
+  useUser,
+  apiFetch,
+  ConfirmModal,
+  Card,
+  CardContainer,
+} from "../../shared";
 import { CreateProduct } from "./Form/CreateForm/CreateForm";
 import { UpdateProduct } from "./Form/UpdateForm/UpdateForm";
 import "./products.css";
@@ -68,10 +74,13 @@ export const ProductPage = () => {
     }
 
     try {
-      const data = await apiFetch(`/products?title=${encodeURIComponent(search)}`, {
-        method: "GET",
-        requireAuth: false,
-      });
+      const data = await apiFetch(
+        `/products?title=${encodeURIComponent(search)}`,
+        {
+          method: "GET",
+          requireAuth: false,
+        }
+      );
       setProducts(data.data);
     } catch (error) {
       console.error("Error searching products:", error);
@@ -85,10 +94,13 @@ export const ProductPage = () => {
     }
 
     try {
-      const data = await apiFetch(`/products?type=${encodeURIComponent(selectedFilter)}`, {
-        method: "GET",
-        requireAuth: false,
-      });
+      const data = await apiFetch(
+        `/products?type=${encodeURIComponent(selectedFilter)}`,
+        {
+          method: "GET",
+          requireAuth: false,
+        }
+      );
       setProducts(data.data);
     } catch (error) {
       console.error("Error filtering products:", error);
@@ -123,7 +135,6 @@ export const ProductPage = () => {
   };
 
   return (
-    
     <div>
       {!userLoading && user?.role === "admin" && (
         <CreateProduct onCreateProduct={loadProduct} />
@@ -157,14 +168,11 @@ export const ProductPage = () => {
               alt={product.title}
             />
             <h2>{product.title}</h2>
-            <h3>{product.desc}</h3>
             <p>{product.price}</p>
             <p>{product.type}</p>
 
             <div className="button-group">
-              <button
-                onClick={() => handleAddToCart(product.id)}
-              >
+              <button onClick={() => handleAddToCart(product.id)}>
                 Добавить в корзину
               </button>
               {!userLoading && user?.role === "admin" && (

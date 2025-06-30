@@ -18,7 +18,7 @@ export const CreateProduct = ({ onCreateProduct }) => {
       formData.append("desc", data.desc);
       formData.append("price", data.price);
       formData.append("type", data.type);
-      
+
       if (data.img && data.img[0]) {
         formData.append("img", data.img[0]);
       }
@@ -44,7 +44,11 @@ export const CreateProduct = ({ onCreateProduct }) => {
 
   return (
     <div>
-      <button className="button" onClick={openModal} style={{ marginBottom: 16 }}>
+      <button
+        className="button"
+        onClick={openModal}
+        style={{ marginBottom: 16 }}
+      >
         Создать товар
       </button>
 

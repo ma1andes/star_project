@@ -42,10 +42,8 @@ export const CartPage = () => {
             <Card key={item.id}>
               <img
                 src={`http://127.0.0.1:8000/media/${item.img}`}
-                alt={item.title}
               />
               <h2>{item.title}</h2>
-              <h3>{item.desc}</h3>
               <p>{item.price}</p>
               <p>{item.type}</p>
             </Card>

@@ -71,7 +71,7 @@ class CartSerializer(serializers.ModelSerializer):
     title = serializers.CharField(source="product.title")
     desc = serializers.CharField(source="product.desc")
     type = serializers.CharField(source="product.type")
-    price = serializers.CharField(source="product.title")
+    price = serializers.CharField(source="product.price")
 
     class Meta:
         model = ProductModel
