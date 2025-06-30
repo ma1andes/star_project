@@ -7,6 +7,7 @@ import {
   ConcertPage,
   QA,
   ProductPage,
+  HomePage,
 } from "../../pages";
 
 const router = createBrowserRouter([
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <Layout />,
     children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
       {
         path: "/register",
         element: <RegisterPage />,

@@ -1,0 +1,26 @@
+/* Стили для формы видео заказа */
+.auth-required {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.auth-required p {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.close-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.close-btn:hover {
+  background: #5a67d8;
+} 

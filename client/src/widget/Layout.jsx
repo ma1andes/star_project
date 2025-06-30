@@ -29,6 +29,7 @@ function Layout() {
   return (
     <div>
       <nav className="header">
+        <Link to={"/"}>home</Link>
         {!user && <Link to={"/register"}>register</Link>}
         {!user && <Link to={"/login"}>login</Link>}
         <Link to={"/product"}>product</Link>
