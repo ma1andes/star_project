@@ -20,6 +20,7 @@ from .views import (
     get_me,
     logout,
     get_concerts_for_map,
+    get_cities,
 )
 
 urlpatterns = [
@@ -33,6 +34,7 @@ urlpatterns = [
     path("products", get_product),
     path("products/<int:id>", get_product_detail),
     path("cart", get_cart),
+    path("cities", get_cities),
     # создание
     path("concert", create_concert),
     path("product", create_product),

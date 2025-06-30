@@ -418,6 +418,27 @@ def update_video_request_status(request, id):
 
 @api_view(["GET"])
 def get_concerts_for_map(request):
-    concerts = ConcertModel.objects.all().select_related("city")
-    serializer = ConcertSerializer(concerts, many=True)
-    return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+    concerts = ConcertModel.objects.all()
+    data = []
+    for concert in concerts:
+        data.append({
+            'id': concert.id,
+            'title': concert.title,
+            'city': concert.city.name,
+            'latitude': concert.city.latitude,
+            'longitude': concert.city.longitude,
+            'date': concert.date,
+            'time': concert.time,
+        })
+    return Response({'data': data}, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def get_cities(request):
+    """Получить все города для select поля"""
+    cities = City.objects.all().order_by('name')
+    serializer = CitySerializer(cities, many=True)
+    return Response(
+        {"data": serializer.data, "errors": None}, 
+        status=status.HTTP_200_OK
+    )
