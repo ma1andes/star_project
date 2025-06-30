@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { apiFetch, Modal, FormBuilder } from "../../../shared";
+import { apiFetch, Modal, FormBuilder } from "../../../../shared";
 import { formFields as baseFormFields } from "./configs";
 
 export const CreateConcert = ({ onCreateConcert }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [cities, setCities] = useState([]);
   const [isLoadingCities, setIsLoadingCities] = useState(false);
@@ -46,8 +46,8 @@ export const CreateConcert = ({ onCreateConcert }) => {
     });
   };
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const openModal = () => setIsModalCreateOpen(true);
+  const closeModal = () => setIsModalCreateOpen(false);
 
   const handleFormSubmit = async (data) => {
     try {
@@ -88,7 +88,7 @@ export const CreateConcert = ({ onCreateConcert }) => {
       </button>
 
       <Modal
-        isOpen={isModalOpen}
+        isOpen={isModalCreateOpen}
         onClose={closeModal}
         title="СОЗДАНИЕ КОНЦЕРТА"
         isLoading={isLoading}
