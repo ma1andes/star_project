@@ -446,7 +446,6 @@ def get_concerts_for_map(request):
 
 @api_view(["GET"])
 def get_cities(request):
-    """Получить все города для select поля"""
     cities = City.objects.all().order_by('name')
     serializer = CitySerializer(cities, many=True)
     return Response(
