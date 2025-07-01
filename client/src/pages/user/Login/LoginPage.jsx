@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUser, apiFetch } from "../../shared";
+import { useUser, apiFetch } from "../../../shared";
 import "./LoginPage.css"; // Импорт стилей
 
 export const LoginPage = () => {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiFetch } from "../../shared";
+import { apiFetch } from "../../../shared";
 import "./RegisterPage.css"; // Импорт стилей
 
 export const RegisterPage = () => {
