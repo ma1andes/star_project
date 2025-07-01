@@ -21,6 +21,7 @@ from .views import (
     logout,
     get_concerts_for_map,
     get_cities,
+    delete_product_in_cart,
 )
 
 urlpatterns = [
@@ -43,6 +44,7 @@ urlpatterns = [
     path("product/<int:id>", change_product),
     path("qa/<int:id>", change_qa),
     path("cart/<int:id>", add_product_in_cart),
+    path("cart_item/<int:id>", delete_product_in_cart),
     # qa
     path("qa", qa),
     path("qa/vopr", get_qa),
