@@ -169,20 +169,14 @@ def add_product_in_cart(request, id):
     )
 
 @api_view(['DELETE'])
-# @permission_classes([permissions.isAdmin])
+@permission_classes([permissions.IsAuthenticated])
 def delete_product_in_cart(request, id):
-    if request.user.role == 'admin':
-        cart_item = get_object_or_404(CartItemModel, id=id)
-        if request.method == 'DELETE':
-            cart_item.delete()
-            return Response(
-                {"message": "success", "data": None}, status=status.HTTP_200_OK
-            )
-    return Response(
-        {"data": None, "errors": {"code": 401, "error": "Permission denied"}},
-        status=status.HTTP_401_UNAUTHORIZED,
-    )
-
+    cart_item = get_object_or_404(CartItemModel, id=id)
+    if request.method == 'DELETE':
+        cart_item.delete()
+        return Response(
+            {"message": "success", "data": None}, status=status.HTTP_200_OK
+        )
 
 
 
