@@ -63,7 +63,8 @@ export const CartPage = () => {
       });
     }
   };
-
+  console.log(cart);
+  
   useEffect(() => {
     fetchCart();
   }, []);

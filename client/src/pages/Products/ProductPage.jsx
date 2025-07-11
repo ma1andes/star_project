@@ -21,6 +21,32 @@ export const ProductPage = () => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
   const { user, loading: userLoading } = useUser();
+  
+  // Состояние для уведомлений
+  const [notification, setNotification] = useState({
+    show: false,
+    message: "",
+    type: "success" // или "error"
+  });
+
+  // Показ уведомления
+  const showNotification = (message, type = "success") => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => {
+      setNotification(prev => ({ ...prev, show: false }));
+    }, 3000);
+  };
+
+  const Notification = () => {
+    if (!notification.show) return null;
+
+    return (
+      <div className={`notification ${notification.type}`}>
+        {notification.message}
+        <div className="notification-progress"></div>
+      </div>
+    );
+  };
 
   const deleteProduct = async (id) => {
     try {
@@ -30,8 +56,10 @@ export const ProductPage = () => {
       });
       setProducts(prev => prev.filter(product => product.id !== id));
       setDisplayedProducts(prev => prev.filter(product => product.id !== id));
+      showNotification("Товар успешно удален", "success");
     } catch (error) {
       console.error("Error deleting product:", error);
+      showNotification("Ошибка при удалении товара", "error");
     }
   };
 
@@ -42,6 +70,7 @@ export const ProductPage = () => {
   const handleProductUpdate = (updatedProduct) => {
     setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
     setDisplayedProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
+    showNotification("Товар успешно обновлен", "success");
   };
 
   const closeUpdateModal = () => {
@@ -61,6 +90,7 @@ export const ProductPage = () => {
       console.error("Error loading products:", error);
       setProducts([]);
       setDisplayedProducts([]);
+      showNotification("Ошибка загрузки товаров", "error");
     } finally {
       setLoading(false);
     }
@@ -75,7 +105,6 @@ export const ProductPage = () => {
 
     try {
       setIsFiltering(true);
-      // Анимация исчезновения
       setDisplayedProducts(prev => prev.map(p => ({ ...p, fadeState: 'fade-out' })));
       
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -93,6 +122,7 @@ export const ProductPage = () => {
       }, 50);
     } catch (error) {
       console.error("Error searching products:", error);
+      showNotification("Ошибка поиска товаров", "error");
     } finally {
       setIsFiltering(false);
     }
@@ -106,7 +136,6 @@ export const ProductPage = () => {
 
     try {
       setIsFiltering(true);
-      // Анимация исчезновения
       setDisplayedProducts(prev => prev.map(p => ({ ...p, fadeState: 'fade-out' })));
       
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -124,6 +153,7 @@ export const ProductPage = () => {
       }, 50);
     } catch (error) {
       console.error("Error filtering products:", error);
+      showNotification("Ошибка фильтрации товаров", "error");
     } finally {
       setIsFiltering(false);
     }
@@ -145,9 +175,10 @@ export const ProductPage = () => {
         method: "POST",
         requireAuth: true,
       });
-      alert("Товар добавлен в корзину!");
+      showNotification("Товар добавлен в корзину!", "success");
     } catch (error) {
       console.error("Error adding product to cart:", error);
+      showNotification("Ошибка при добавлении в корзину", "error");
     }
   };
 
@@ -158,6 +189,8 @@ export const ProductPage = () => {
 
   return (
     <div className="products-page">
+      <Notification />
+      
       {!userLoading && user?.role === "admin" && (
         <CreateProduct onCreateProduct={loadProduct} />
       )}
